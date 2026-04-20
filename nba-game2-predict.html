@@ -191,8 +191,8 @@ const MATCH_COUNT = SECTIONS.flatMap(s=>s.matches).length;
 const MATCH_COLS  = SECTIONS.flatMap(s=>s.matches).map(m=>`${m.teamA.name}/${m.teamB.name}`);
 
 // ── Supabase（填入你的 URL 和 Key）──────────────────
-const SUPABASE_URL = 'SUPABASE_URL_HERE';
-const SUPABASE_KEY = 'SUPABASE_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://bimtkibwtfccfxqqupnm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbXRraWJ3dGZjY2Z4cXF1cG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NzE0OTQsImV4cCI6MjA5MjI0NzQ5NH0.xJLdBExlUb9Af-05HMvZEeowREGVn7qD9JZZPGYYfnc';
 const TABLE = 'predictions';
 
 let supa = null;
@@ -203,6 +203,13 @@ let myName = '';
 
 // ── 初始化 Supabase 或 fallback 到 window.storage ──
 function initStorage() {
+  // 在 Claude 預覽環境裡不使用 Supabase，改用 window.storage
+  const inClaude = (window.location.protocol === 'blob:' || window.location.hostname === '');
+  if (inClaude) {
+    supa = null;
+    setStatus('', '💾 Claude 預覽模式（僅本機）');
+    return;
+  }
   if (SUPABASE_URL !== 'SUPABASE_URL_HERE') {
     try {
       const { createClient } = supabase;
